@@ -103,7 +103,7 @@ def UserForGenre(genero):
 @app.get("/best_developer_year/{anio}")
 def best_developer_year(anio:int):
     developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
-    developer = developer[['release_date','id','developer']]
+    developers = developers[['release_date','id','developer']]
 
     #Verificamos si existe el año pedido.
     if anio in developers['release_date'].unique():
