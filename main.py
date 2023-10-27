@@ -6,7 +6,8 @@ app = FastAPI()
 
 @app.get("/developer/{desarrollador}")
 def developer(desarrollador:str):
-    df = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')['price','developer','release_date']
+    df = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
+    df = df[['price','developer','release_date']]
     desarrollador = desarrollador.title() #Ponemos como esta en los datasets
 
     #Verificamos si existe el developer pedido
@@ -56,8 +57,10 @@ def userdata(usuario:str):
         return {'Error':'No existe el usuario.'}
     
     #Cargamos los datasets
-    juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')['id','price']
-    recomendaciones = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')['user_id','recommend']
+    juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
+    juegos = juegos['id','price']
+    recomendaciones = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
+    recomendaciones = recomendaciones['user_id','recommend']
 
     # Gurdamos la cantidad de items del usuario
     cant_items = user_items['items_count'].iloc[0] 
@@ -89,7 +92,8 @@ def UserForGenre(genero):
 
 @app.get("/best_developer_year/{anio}")
 def best_developer_year(anio:int):
-    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')['release_date','id','developer']
+    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
+    developer = developer['release_date','id','developer']
 
     #Verificamos si existe el año pedido.
     if anio in developers['release_date'].unique():
@@ -120,7 +124,8 @@ def best_developer_year(anio:int):
 
 @app.get("/developer_reviews_analysis/{desarrollador}")
 def developer_reviews_analysis(desarrollador:str):
-    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')['id','developer']
+    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
+    developers = developers['id','developer']
     desarrollador = desarrollador.title()
 
     #Verificamos si existe el desarrolador
