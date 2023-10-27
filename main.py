@@ -123,14 +123,14 @@ def UserForGenre(genero:str):
 
 @app.get("/best_developer_year/{anio}")
 def best_developer_year(anio:int):
-    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
+    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip', encoding='MacRoman')
     developers = developers[['release_date','id','developer']]
 
     #Verificamos si existe el año pedido.
     if anio in developers['release_date'].unique():
         developers = developers[developers['release_date'] == anio] #Nos quedamos con el año que necesitamos
     else:
-        return {'Error':'No hay ningun lanzamiento ese año'}
+        return {'Error':'No hay ningun lanzamiento ese año.'}
 
     user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
     user_reviews = user_reviews[['item_id','recommend','sentiment_analysis']]
@@ -151,8 +151,15 @@ def best_developer_year(anio:int):
 
     # Creo el top 3 para mas comodidad.
     top3 = user_reviews['masRecomendados'].sort_values(ascending=False).head(3).index
+
+    respuesta = {}
+    for cantidad, desarrollador in enumerate(top3):
+        respuesta[f'Puesto {cantidad+1}'] = desarrollador
     
-    return {'Puesto 1': top3[0], 'Puesto 2': top3[1], 'Puesto 3': top3[2]}
+    if respuesta:
+        return respuesta
+    else:
+        return {'Error':'No hay ninguna review para ese año.'}
 
 
 
