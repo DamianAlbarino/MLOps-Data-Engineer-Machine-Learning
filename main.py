@@ -61,7 +61,7 @@ def userdata(usuario:str):
 
     #Verificamos si existe el usuario
     if type(user_items) == bool:
-        print({'Error':'No existe el usuario.'})
+        return {'Error':'No existe el usuario.'}
 
     user_items = user_items[user_items['user_id'] == usuario]
 
