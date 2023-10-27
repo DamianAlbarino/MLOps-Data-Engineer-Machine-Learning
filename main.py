@@ -105,18 +105,18 @@ def userdata(usuario:str):
 
 @app.get("/UserForGenre/{genero}")
 def UserForGenre(genero:str):
+    
     #Leemos el dataframe
     df = pd.read_json(r'Datasets/genre.json.gz', compression='gzip', encoding='MacRoman')
 
-    return {'Msj':'Leido'}
-    # #Nos fijamos si el genero pedido se encuentra en la lista de generos
-    # if genero in df['genero'].unique():
-    #     df = df[df['genero'] == genero]
-    #     usuario = df['usuario'].iloc[0] #Agarramos el usuario
-    #     horasJugadas = df['Horas jugadas'].iloc[0] #Agarramos la cantidad de horas por año
-    #     return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
-    # else:
-    #     return {'Mensaje':'No se encuentran horas registradas para este genero.'}
+    #Nos fijamos si el genero pedido se encuentra en la lista de generos
+    if genero in df['genero'].unique():
+        df = df[df['genero'] == genero]
+        usuario = df['usuario'].iloc[0] #Agarramos el usuario
+        horasJugadas = df['Horas jugadas'].iloc[0] #Agarramos la cantidad de horas por año
+        return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
+    else:
+        return {'Mensaje':'No se encuentran horas registradas para este genero.'}
 
 
 
