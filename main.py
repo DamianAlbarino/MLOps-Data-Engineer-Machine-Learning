@@ -106,7 +106,7 @@ def userdata(usuario:str):
 @app.get("/UserForGenre/{genero}")
 def UserForGenre(genero):
     #Leemos el dataframe
-    df_horasXgenero = pd.read_json('Datasets//userForGenre.json.gz', compression='gzip')
+    df_horasXgenero = pd.read_csv('Datasets//userForGenre.csv.gz', compression='gzip')
     return {'Msj':'Leido'}
     # #Nos fijamos si el genero pedido se encuentra en la lista de generos
     # if genero in df_horasXgenero['genero'].unique():
