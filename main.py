@@ -108,7 +108,8 @@ def UserForGenre(genero:str):
     
     #Leemos el dataframe
     df = pd.read_json(r'Datasets/genre.json.gz', compression='gzip', encoding='MacRoman')
-
+    genero = genero.capitalize() #Normalizamos el nombre
+    
     #Nos fijamos si el genero pedido se encuentra en la lista de generos
     if genero in df['genero'].unique():
         df = df[df['genero'] == genero]
