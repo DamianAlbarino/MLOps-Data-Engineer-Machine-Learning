@@ -4,13 +4,9 @@ import pyarrow.parquet as pq
 
 app = FastAPI()
 
-steam = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
-review = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
-items = pq.read_table('Datasets/items.parquet').to_pandas()
-
 @app.get("/developer/{desarrollador}")
 def developer(desarrollador:str):
-    df = steam[['price','developer','release_date']].copy()
+    df = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip', usecols=['price','developer','release_date'])
     desarrollador = desarrollador.title() #Ponemos como esta en los datasets
 
     #Verificamos si existe el developer pedido
@@ -51,7 +47,7 @@ def developer(desarrollador:str):
 
 @app.get("/userdata/{usuario}")
 def userdata(usuario:str):
-    user_items = items.copy()
+    user_items = pq.read_table('Datasets/items.parquet').to_pandas()
 
     #Verificamos si existe el usuario
     if (usuario in user_items['user_id'].unique()):
@@ -60,8 +56,8 @@ def userdata(usuario:str):
         return {'Error':'No existe el usuario.'}
     
     #Cargamos los datasets
-    juegos = steam[['id','price']].copy() # o pd.read_csv('API/Datasets/Steam_Games_Limpio.csv', sep=';', usecols=['id','price'])
-    recomendaciones = review[['user_id','recommend']].copy() # o pd.read_csv('API/Datasets/User_Reviews_Limpio.csv', usecols=['user_id','recommend'])
+    juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip', usecols=['id','price'])
+    recomendaciones = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip', usecols=['user_id','recommend'])
 
     # Gurdamos la cantidad de items del usuario
     cant_items = user_items['items_count'].iloc[0] 
@@ -93,7 +89,7 @@ def UserForGenre(genero):
 
 @app.get("/best_developer_year/{anio}")
 def best_developer_year(anio:int):
-    developers = steam[['release_date','id','developer']].copy()
+    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip', usecols=['release_date','id','developer'])
 
     #Verificamos si existe el año pedido.
     if anio in developers['release_date'].unique():
@@ -101,7 +97,7 @@ def best_developer_year(anio:int):
     else:
         return {'Error':'No hay ningun lanzamiento ese año'}
 
-    user_reviews = review[['item_id','recommend','sentiment_analysis']]
+    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip', usecols=['item_id','recommend','sentiment_analysis'])
     user_reviews = user_reviews.merge(developers, left_on='item_id', right_on='id')[['developer','sentiment_analysis','recommend']] # Unimos los datasets para que el manejo sea mas facil
 
     # Reemplazo el tipo de dato a str para poder utilizar el replace y vuevlo a ponerlo a int para posteriormente sumarlos y obtener la cantidad de positivos ya que el unico q me interesa que sume es el mismo.
@@ -124,7 +120,7 @@ def best_developer_year(anio:int):
 
 @app.get("/developer_reviews_analysis/{desarrollador}")
 def developer_reviews_analysis(desarrollador:str):
-    developers = steam[['id','developer']].copy()
+    developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip', usecols=['id','developer'])
     desarrollador = desarrollador.title()
 
     #Verificamos si existe el desarrolador
@@ -133,7 +129,7 @@ def developer_reviews_analysis(desarrollador:str):
     else:
         return {'Error':'No existe el desarrollador'}
 
-    user_reviews = review[['item_id','sentiment_analysis']]
+    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip', usecols=['item_id','sentiment_analysis'])
 
     #Unimos los datasets, con inner asi los que no se encuentran en ambos no figuran.
     developers = developers.merge(user_reviews, left_on='id', right_on='item_id')
