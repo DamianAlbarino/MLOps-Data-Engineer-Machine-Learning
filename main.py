@@ -4,6 +4,8 @@ import pyarrow.parquet as pq
 
 app = FastAPI()
 
+
+
 @app.get("/developer/{desarrollador}")
 def developer(desarrollador:str):
     df = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
@@ -46,6 +48,8 @@ def developer(desarrollador:str):
     return respuesta
 
 
+
+
 @app.get("/userdata/{usuario}")
 def userdata(usuario:str):
     user_items = pq.read_table('Datasets/items.parquet').to_pandas()
@@ -58,9 +62,9 @@ def userdata(usuario:str):
     
     #Cargamos los datasets
     juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
-    juegos = juegos['id','price']
+    juegos = juegos[['id','price']]
     recomendaciones = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
-    recomendaciones = recomendaciones['user_id','recommend']
+    recomendaciones = recomendaciones[['user_id','recommend']]
 
     # Gurdamos la cantidad de items del usuario
     cant_items = user_items['items_count'].iloc[0] 
@@ -79,6 +83,9 @@ def userdata(usuario:str):
     gasto_total = f"{round(juegos['price'].sum(),2)} USD" # Sumamos todos los precios porque al estar filtrados con solo los que tiene el usuario nos daria el monto total gastado. El round esta por que en algunas pruebas me daba mas de 2 decimales aunque esten corregidos en el ETL.
     return {'Usuario': f'{usuario}', 'Dinero gastado': gasto_total, "% de recomendación": f'{porcentaje_de_recomendaciones}', "cantidad de items": f'{cant_items}'}
 
+
+
+
 @app.get("/UserForGenre/{genero}")
 def UserForGenre(genero):
     df_horasXgenero = pd.read_json('Datasets/userForGenre.json.gz')
@@ -90,10 +97,13 @@ def UserForGenre(genero):
     else:
         return {'Mensaje':'No se encuentran horas registradas para este genero.'}
 
+
+
+
 @app.get("/best_developer_year/{anio}")
 def best_developer_year(anio:int):
     developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
-    developer = developer['release_date','id','developer']
+    developer = developer[['release_date','id','developer']]
 
     #Verificamos si existe el año pedido.
     if anio in developers['release_date'].unique():
@@ -101,7 +111,8 @@ def best_developer_year(anio:int):
     else:
         return {'Error':'No hay ningun lanzamiento ese año'}
 
-    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')['item_id','recommend','sentiment_analysis']
+    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
+    user_reviews = user_reviews[['item_id','recommend','sentiment_analysis']]
     user_reviews = user_reviews.merge(developers, left_on='item_id', right_on='id')[['developer','sentiment_analysis','recommend']] # Unimos los datasets para que el manejo sea mas facil
 
     # Reemplazo el tipo de dato a str para poder utilizar el replace y vuevlo a ponerlo a int para posteriormente sumarlos y obtener la cantidad de positivos ya que el unico q me interesa que sume es el mismo.
@@ -122,10 +133,13 @@ def best_developer_year(anio:int):
     
     return {'Puesto 1': top3[0], 'Puesto 2': top3[1], 'Puesto 3': top3[2]}
 
+
+
+
 @app.get("/developer_reviews_analysis/{desarrollador}")
 def developer_reviews_analysis(desarrollador:str):
     developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
-    developers = developers['id','developer']
+    developers = developers[['id','developer']]
     desarrollador = desarrollador.title()
 
     #Verificamos si existe el desarrolador
@@ -134,7 +148,8 @@ def developer_reviews_analysis(desarrollador:str):
     else:
         return {'Error':'No existe el desarrollador'}
 
-    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')['item_id','sentiment_analysis']
+    user_reviews = pd.read_json('Datasets/User_Reviews_Limpio.json.gz', compression='gzip')
+    user_reviews = user_reviews[['item_id','sentiment_analysis']]
 
     #Unimos los datasets, con inner asi los que no se encuentran en ambos no figuran.
     developers = developers.merge(user_reviews, left_on='id', right_on='item_id')
