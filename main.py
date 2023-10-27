@@ -1,9 +1,8 @@
 from fastapi import FastAPI
 import pandas as pd
-import pyarrow.parquet as pq
+import ast
 
 app = FastAPI()
-
 
 
 @app.get("/developer/{desarrollador}")
@@ -49,17 +48,23 @@ def developer(desarrollador:str):
 
 
 
-
 @app.get("/userdata/{usuario}")
 def userdata(usuario:str):
-    user_items = pq.read_table('Datasets/items.parquet').to_pandas()
+
+    user_items = False #Creamos como bandera
+
+    for x in pd.read_csv('Datasets/items.csv.gz', chunksize=3000):
+        if usuario in x['user_id'].unique():
+            user_items = x
+            break
+        x = 0
 
     #Verificamos si existe el usuario
-    if (usuario in user_items['user_id'].unique()):
-        user_items = user_items[user_items['user_id'] == usuario] #Filtramos user_items por el usuario pedido
-    else:
-        return {'Error':'No existe el usuario.'}
-    
+    if type(user_items) == bool:
+        print({'Error':'No existe el usuario.'})
+
+    user_items = user_items[user_items['user_id'] == usuario]
+
     #Cargamos los datasets
     juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
     juegos = juegos[['id','price']]
@@ -75,14 +80,25 @@ def userdata(usuario:str):
     recomendaciones_postitvas = recomendaciones.value_counts()[True] # Nos quedamos con la cantidad de que son positivas
     porcentaje_de_recomendaciones = f'{round((recomendaciones_postitvas/cant_total_recomendaciones)*100,2)}%' # Porcentaje total de las recomendaciones en formato str.
 
-    # Hacemos verificamos los items que tiene para poder calcular el monto gastado con la informacion que tenemos.
-    user_items = user_items.explode('items')
-    user_items =  user_items['items'].apply(pd.Series) # Creamos un dataset con los items
-    user_items['item_id'] = user_items['item_id'].astype(int)
-    juegos = juegos.merge(user_items, left_on='id', right_on='item_id') #Combinamos los 2 datasets para poder tener la infromacion toda junta tiene que ser de tipo innner ya que los que no se encuentren en el dataset de steam se vayan y que den solo la interseccion de ambos datasets. 
-    gasto_total = f"{round(juegos['price'].sum(),2)} USD" # Sumamos todos los precios porque al estar filtrados con solo los que tiene el usuario nos daria el monto total gastado. El round esta por que en algunas pruebas me daba mas de 2 decimales aunque esten corregidos en el ETL.
-    return {'Usuario': f'{usuario}', 'Dinero gastado': gasto_total, "% de recomendación": f'{porcentaje_de_recomendaciones}', "cantidad de items": f'{cant_items}'}
+    cantidad = 0
+    listaDeJuegosDelUsuario = []
+    for item in user_items['items']:
+        for j in (item.replace('[','').replace(']','').replace('\n','').split('}')):
+            if cantidad < cant_items:
+                if j != '':
+                    palabra = j.lstrip() + '}'
+                cantidad+=1
+                palabra = ast.literal_eval(palabra)
+                listaDeJuegosDelUsuario.append(int(palabra.get('item_id')))
 
+    #Creo un dataframe con la lista de juegos.
+    dfJuegos = pd.DataFrame()
+    dfJuegos['id'] = listaDeJuegosDelUsuario
+
+    juegos.merge(dfJuegos, on='id')
+    gasto_total = f"{round(juegos['price'].sum(),2)} USD"
+   
+    return {'Usuario': f'{usuario}', 'Dinero gastado': gasto_total, "% de recomendación": f'{porcentaje_de_recomendaciones}', "cantidad de items": f'{cant_items}'}
 
 
 
@@ -99,7 +115,6 @@ def UserForGenre(genero):
         return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
     else:
         return {'Mensaje':'No se encuentran horas registradas para este genero.'}
-
 
 
 
@@ -135,7 +150,6 @@ def best_developer_year(anio:int):
     top3 = user_reviews['masRecomendados'].sort_values(ascending=False).head(3).index
     
     return {'Puesto 1': top3[0], 'Puesto 2': top3[1], 'Puesto 3': top3[2]}
-
 
 
 
