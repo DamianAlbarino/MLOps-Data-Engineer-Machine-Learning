@@ -53,17 +53,17 @@ def userdata(usuario:str):
 
     user_items = False #Creamos como bandera
 
-    for x in pd.read_csv('Datasets/items.csv.gz', chunksize=3000):
-        if usuario in x['user_id'].unique():
-            user_items = x
+    for parteDelDs in pd.read_csv('Datasets/items.csv.gz', chunksize=3000): #Cargamos por partes el dataframe para que Render pueda procesarlo.
+        if usuario in parteDelDs['user_id'].unique(): # Busca si esta en esa porcion del dataframe el usuario
+            user_items = parteDelDs
             break
-        x = 0
+        parteDelDs = 0
 
-    #Verificamos si existe el usuario
+    #Verificamos si encontro el usuario
     if type(user_items) == bool:
         return {'Error':'No existe el usuario.'}
 
-    user_items = user_items[user_items['user_id'] == usuario]
+    user_items = user_items[user_items['user_id'] == usuario] #Filtramos
 
     #Cargamos los datasets
     juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
@@ -80,23 +80,24 @@ def userdata(usuario:str):
     recomendaciones_postitvas = recomendaciones.value_counts()[True] # Nos quedamos con la cantidad de que son positivas
     porcentaje_de_recomendaciones = f'{round((recomendaciones_postitvas/cant_total_recomendaciones)*100,2)}%' # Porcentaje total de las recomendaciones en formato str.
 
+    # Vemos la lista de juegos que posee el usuario para sacar la suma total que gasto
     cantidad = 0
     listaDeJuegosDelUsuario = []
     for item in user_items['items']:
-        for j in (item.replace('[','').replace(']','').replace('\n','').split('}')):
+        for j in (item.replace('[','').replace(']','').replace('\n','').split('}')): # Problemas con el formato (por la forma que lo guarda en csv)
             if cantidad < cant_items:
                 if j != '':
-                    palabra = j.lstrip() + '}'
+                    palabra = j.lstrip() + '}' #Sacamos espacios que hay adelante y completamos el } sacado para q quede en formato un str en formato dict
                 cantidad+=1
-                palabra = ast.literal_eval(palabra)
-                listaDeJuegosDelUsuario.append(int(palabra.get('item_id')))
+                palabra = ast.literal_eval(palabra) # Lo transformamos a dict.
+                listaDeJuegosDelUsuario.append(int(palabra.get('item_id'))) # Nos quedamos solo con el item id de cada juego para luego hacer el merge
 
     #Creo un dataframe con la lista de juegos.
     dfJuegos = pd.DataFrame()
-    dfJuegos['id'] = listaDeJuegosDelUsuario
+    dfJuegos['id'] = listaDeJuegosDelUsuario #Creamos un dataframe para hacer el merge con los juegos
+    juegos.merge(dfJuegos, on='id') # Al hacerlo de esta forma nada mas se quedan los juegos donde hay interseccion entre ambos df.
 
-    juegos.merge(dfJuegos, on='id')
-    gasto_total = f"{round(juegos['price'].sum(),2)} USD"
+    gasto_total = f"{round(juegos['price'].sum(),2)} USD" #Hacemos la suma total de los precios de los juegos y obtenemos los gastos totales.
    
     return {'Usuario': f'{usuario}', 'Dinero gastado': gasto_total, "% de recomendación": f'{porcentaje_de_recomendaciones}', "cantidad de items": f'{cant_items}'}
 
@@ -106,15 +107,15 @@ def userdata(usuario:str):
 def UserForGenre(genero):
     #Leemos el dataframe
     df_horasXgenero = pd.read_json('Datasets//userForGenre.json.gz', compression='gzip')
-
-    #Nos fijamos si el genero pedido se encuentra en la lista de generos
-    if genero in df_horasXgenero['genero'].unique():
-        df_horasXgenero = df_horasXgenero[df_horasXgenero['genero'] == genero]
-        usuario = df_horasXgenero['usuario'].iloc[0] #Agarramos el usuario
-        horasJugadas = df_horasXgenero['Horas jugadas'].iloc[0] #Agarramos la cantidad de horas por año
-        return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
-    else:
-        return {'Mensaje':'No se encuentran horas registradas para este genero.'}
+    return {'Msj':'Leido'}
+    # #Nos fijamos si el genero pedido se encuentra en la lista de generos
+    # if genero in df_horasXgenero['genero'].unique():
+    #     df_horasXgenero = df_horasXgenero[df_horasXgenero['genero'] == genero]
+    #     usuario = df_horasXgenero['usuario'].iloc[0] #Agarramos el usuario
+    #     horasJugadas = df_horasXgenero['Horas jugadas'].iloc[0] #Agarramos la cantidad de horas por año
+    #     return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
+    # else:
+    #     return {'Mensaje':'No se encuentran horas registradas para este genero.'}
 
 
 
