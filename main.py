@@ -96,7 +96,7 @@ def UserForGenre(genero):
         df_horasXgenero = df_horasXgenero[df_horasXgenero['genero'] == genero]
         usuario = df_horasXgenero['usuario'].iloc[0] #Agarramos el usuario
         horasJugadas = df_horasXgenero['Horas jugadas'].iloc[0] #Agarramos la cantidad de horas por año
-        return {f'Usuario con más horas jugadas para Género {genero}': f'{usuario}', "Horas jugadas": f'{horasJugadas}'}
+        return {f'Usuario con más horas jugadas para Género {genero}': usuario, "Horas jugadas": horasJugadas}
     else:
         return {'Mensaje':'No se encuentran horas registradas para este genero.'}
 
