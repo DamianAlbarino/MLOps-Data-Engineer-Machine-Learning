@@ -63,7 +63,7 @@ def userdata(usuario:str):
     if type(user_items) == bool:
         return {'Error':'No existe el usuario.'}
 
-    user_items = user_items[user_items['user_id'] == usuario] #Filtramos
+    user_items = user_items[user_items['user_id'] == usuario] #Filtramos por usuario
 
     #Cargamos los datasets
     juegos = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
@@ -167,7 +167,7 @@ def best_developer_year(anio:int):
 def developer_reviews_analysis(desarrollador:str):
     developers = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
     developers = developers[['id','developer']]
-    desarrollador = desarrollador.title()
+    desarrollador = desarrollador.title() #Normalizamos el nombre
 
     #Verificamos si existe el desarrolador
     if (desarrollador in developers['developer'].unique()): 
@@ -184,8 +184,8 @@ def developer_reviews_analysis(desarrollador:str):
     # Hacemos un recuento de entiment_analysis para posteriormente guardar los positivos y negativos.
     valoresDeVotacion = developers['sentiment_analysis'].value_counts()
 
-    positivos = valoresDeVotacion[2]
-    negativos = valoresDeVotacion[0]
+    positivos = valoresDeVotacion[2]    # Reviews positvas
+    negativos = valoresDeVotacion[0]    # Reviews malas
 
     return {desarrollador: [f'Negative = {negativos}', f'Positive = {positivos}']}
 
