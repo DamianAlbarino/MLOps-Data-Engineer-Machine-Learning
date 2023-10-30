@@ -210,7 +210,7 @@ def recomendacion_usuario(usuario:str):
     juegos.drop_duplicates(inplace=True)
     juegos.drop(tieneUsuario.item_id, inplace=True)
 
-    with open('ML\modeloDeRecomendacion.pkl', 'rb') as archivo:
+    with open(r'ML/modeloDeRecomendacion.pkl', 'rb') as archivo:
         modeloML = pickle.load(archivo)
 
     juegos['Clasificacion'] = juegos['item_name'].apply(lambda x: modeloML.predict(usuario, x).est)
