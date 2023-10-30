@@ -6,7 +6,6 @@ import surprise
 
 app = FastAPI()
 
-
 @app.get("/developer/{desarrollador}")
 def developer(desarrollador:str):
     df = pd.read_json('Datasets/Steam_Games_Limpio.json.gz', compression='gzip')
@@ -190,6 +189,7 @@ def developer_reviews_analysis(desarrollador:str):
     negativos = valoresDeVotacion[0]    # Reviews malas
 
     return {desarrollador: [f'Negative = {negativos}', f'Positive = {positivos}']}
+
 
 
 @app.get("/recomendacion_usuario/{usuario}")
