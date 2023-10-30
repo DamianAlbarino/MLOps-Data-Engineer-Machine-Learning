@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 import pandas as pd
 import ast
+import pickle
+import surprise
 
 app = FastAPI()
 
@@ -189,3 +191,31 @@ def developer_reviews_analysis(desarrollador:str):
 
     return {desarrollador: [f'Negative = {negativos}', f'Positive = {positivos}']}
 
+
+@app.get("/recomendacion_usuario/{usuario}")
+def recomendacion_usuario(usuario:str):
+    df = pd.read_json('ETL - EDA/EDA/EDA_Dataset.json.gz')
+
+    df = df[['user_id','item_name','item_id']]
+
+    tieneUsuario = df[df['user_id'] == usuario]
+    tieneUsuario.drop(columns=['user_id'], inplace=True)
+    tieneUsuario.reset_index(drop=True, inplace=True)
+
+    if tieneUsuario.empty:
+        return {'Error': 'El usuario no existe'}
+
+    juegos = df[['item_name','item_id']].copy()
+    juegos.index = df['item_id']
+    juegos.drop_duplicates(inplace=True)
+    juegos.drop(tieneUsuario.item_id, inplace=True)
+
+    with open('ML\modeloDeRecomendacion.pkl', 'rb') as archivo:
+        modeloML = pickle.load(archivo)
+
+    juegos['Clasificacion'] = juegos['item_name'].apply(lambda x: modeloML.predict(usuario, x).est)
+
+    recomendacion = list(juegos.sort_values('Clasificacion', ascending=False).head(5)['item_name'].values)
+
+
+    return {f'Juegos recomendados para {usuario}': recomendacion}
