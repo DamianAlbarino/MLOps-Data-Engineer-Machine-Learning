@@ -194,28 +194,35 @@ def developer_reviews_analysis(desarrollador:str):
 
 @app.get("/recomendacion_usuario/{usuario}")
 def recomendacion_usuario(usuario:str):
-    df = pd.read_json('ETL - EDA/EDA/EDA_Dataset.json.gz')
+    # Llamamos al dataset que realizamos en el momento de preparar los datos para el EDA
+    df = pd.read_json('ETL - EDA/EDA/EDA_Dataset.json.gz') 
 
+    # Nos quedamos con las columnas necesarias
     df = df[['user_id','item_name','item_id']]
 
+    # Filtramos los items que tiene el usuario
     tieneUsuario = df[df['user_id'] == usuario]
     tieneUsuario.drop(columns=['user_id'], inplace=True)
     tieneUsuario.reset_index(drop=True, inplace=True)
 
+    # En caso que no encuentre el usuario estaria vacio entonces directamente retorna que no existe
     if tieneUsuario.empty:
         return {'Error': 'El usuario no existe'}
 
+    # Sacamos los juegos que tiene el usuario para no recomendar uno que ya tenga
     juegos = df[['item_name','item_id']].copy()
     juegos.index = df['item_id']
     juegos.drop_duplicates(inplace=True)
     juegos.drop(tieneUsuario.item_id, inplace=True)
 
+    # Cargamos el modelo que lo guardamos en formato pickle
     with open(r'ML/modeloDeRecomendacion.pkl', 'rb') as archivo:
         modeloML = pickle.load(archivo)
 
+    # Generamos la clasificacion de que tanto recomendado es para el usuario cada item con la prediccion del modelo
     juegos['Clasificacion'] = juegos['item_name'].apply(lambda x: modeloML.predict(usuario, x).est)
 
+    # Nos quedamos con los 5 mas recomendados
     recomendacion = list(juegos.sort_values('Clasificacion', ascending=False).head(5)['item_name'].values)
-
 
     return {f'Juegos recomendados para {usuario}': recomendacion}
