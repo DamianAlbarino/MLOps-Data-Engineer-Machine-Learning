@@ -152,3 +152,16 @@ Ejemplo de retorno:
     "Positive = 4446"
   ]
 }`
+
+## Análisis exploratorio de los datos (EDA)
+
+
+## Contacto
+
+Si tienes alguna pregunta, sugerencia o simplemente quieres ponerte en contacto conmigo, estaré encantado de hablar contigo. Puedes alcanzarme de las siguientes maneras:
+
+- Correo Electrónico: [damianalbarino@hotmail.com](mailto:damianalbarino@hotmail.com)
+- LinkedIn: [Damián Nicolas Albariño](https://www.linkedin.com/in/dami%C3%A1n-nicol%C3%A1s-albari%C3%B1o-b03b9a1ab/)
+
+
+¡Gracias por visitar mi proyecto!
