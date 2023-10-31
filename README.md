@@ -166,9 +166,13 @@ Esta funcion se va a explicar mas adelante con el [modelo de aprendizaje automat
 ## <a name="eda">Análisis exploratorio de los datos [(EDA_Datasets.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/EDA_Datasets.ipynb)</a>
 
 ### Top 5 juego con mas horas jugadas (playtime_forever)
+Podemos observar los 5 juegos con mas horas jugadas por todos los usuarios.
+
 ![](img/top5_juegos_horas.png)
 
 ### Analisis de price
+Podemos observar que la mayoria de los juegos son gratis, y hay algunos outliers que decido mantenerlos.
+
 ![](img/analisisPrice.png)
 
 ### Analisis de generos
