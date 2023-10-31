@@ -11,7 +11,8 @@ Voy a resumir cada parte de lo hecho en cada instancia. Para obtener detalles es
 2. [Desarrollo API](#api)
 3. [Análisis exploratorio de los datos](#eda)
 4. [Modelo de Aprendizaje Automático](#ml)
-5. [Contacto](#contacto)
+5. [Video](#video)
+6. [Contacto](#contacto)
 
 ## <a name="etl">ETL</a>
 El manejo de los datos, la eliminación y la interpretación están a cargo de las funciones solicitadas para el desarrollo de la API.
@@ -246,6 +247,9 @@ Ejemplo de retorno: `{
     "SUPERHOT"
   ]
 }`
+
+# <a name="video">Video</a>
+Video donde se explica brevemente el funcionamiento de la API. [Link](https://youtu.be/qTzAutFguDg)
 
 # <a name="contacto">Contacto</a>
 
