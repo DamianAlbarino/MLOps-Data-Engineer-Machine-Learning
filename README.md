@@ -6,41 +6,36 @@ En este proyecto, se realiza una serie de tareas de extracción, transformación
 
 Voy a resumir cada parte de lo hecho en cada instancia. Para obtener detalles específicos sobre las acciones realizadas en cada parte, consultar los archivos correspondientes, que están debidamente comentados.
 
-## ETL (Carpeta ETL - EDA)
+## ETL
 El manejo de los datos, la eliminación y la interpretación están a cargo de las funciones solicitadas para el desarrollo de la API.
 
-### Steam games (ETL_Steam_Games.ipynb)
+### Steam games [(ETL_Steam_Games.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/ETL_Steam_games.ipynb)
 En este cuaderno Jupyter, se lleva a cabo el procesamiento de datos para el conjunto de datos de juegos de Steam.
 
 #### Eliminación de filas nulas
 Desde un principio, se observa un gran número de filas con valores nulos. Estas filas se eliminan y luego se procede a analizar cada columna.
 
 #### Columnas importantes
-Se da prioridad a ciertas columnas que se consideran relevantes para el desarrollo de la API, estas incluyen: id, genres, price, release date y developer.
+Se da prioridad a ciertas columnas que se consideran relevantes para el desarrollo de la API, estas incluyen: `id, genres, price, release date y developer`.
 
-#### ID
+#### `ID`
 En la columna "id", se realizan las siguientes acciones:
 - Eliminación de valores nulos y duplicados.
 - Cambio del tipo de dato a INT.
 
-#### Genres
+#### `Genres`
 En la columna "genres", se realiza el siguiente procesamiento:
 - Tratamiento de valores nulos. Se utiliza la información de la columna "tags" para rellenar los nulos en "genres". 
 - Los demás valores nulos son eliminados.
 
-#### Price
+#### `Price`
 En la columna "price", se lleva a cabo el siguiente procesamiento:
 - Identificación de todos los valores únicos.
 - Establecimiento en 0.0 de los valores nulos y de aquellos que corresponden a juegos con "tags" o género "Free to Play". También se ajustan a 0.0 los que tienen valores como "Free," "Demo," "Play" e "Install".
 - Eliminación de datos nulos, ya que no se dispone de información para completarlos.
 - Redondeo de los valores a 2 decimales.
 
-#### Release data
-Vemos que hay diferentes formatos de como esta puesta la fecha de lanzamiento, me interesa nada mas el año de lanzamiento.
-Para ello procesamos cada tipo de formato de fecha para que quede solo el año.
-Los datos nulos y datos que no tenian formato fecha son eliminados.
-
-### Release data
+#### `Release data`
 La columna "release date" presenta diferentes formatos de fecha. 
 - Se busca obtener únicamente el año de lanzamiento. 
 - Para ello, se procesa cada tipo de formato de fecha para extraer el año.
@@ -49,7 +44,7 @@ Los datos nulos y aquellos que no tienen un formato de fecha válido se eliminan
 #### Por ultimo
 Se verifica que no queden valores vacíos en las columnas procesadas y se eliminan el resto de las columnas antes de exportar los datos en un formato JSON comprimido en gzip.
 
-### User Reviews (ETL_user_reviews.ipynb)
+### User Reviews [(ETL_user_reviews.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/ETL_user_reviews.ipynb)
 
 En este cuaderno Jupyter, se lleva a cabo el procesamiento de datos para el conjunto de datos de las reviews de los usuarios.
 
@@ -59,16 +54,16 @@ Se realiza la siguiente transformación de los datos:
 - Se separan todas las reviews y se genera una fila por cada review dentro de la columna "reviews", donde cada elemento contiene múltiples reviews del mismo usuario. Estas se concatenan para facilitar su procesamiento.
 - Se eliminan filas y columnas con valores nulos, considerándolos como datos irrelevantes.
 
-#### Creación de la columna de análisis de sentimiento (Feature Engineering)
+#### Creación de la columna de análisis de sentimiento (`Feature Engineering`)
 
-Se crea la columna "sentiment_analysis" utilizando la librería nltk, que incluye la herramienta Sentiment Vader, un modelo entrenado para puntuar un texto como positivo, neutro o negativo. El análisis produce un diccionario de la forma {'neg': valor, 'neu': valor, 'pos': valor, 'compound': valor}. El valor "compound" representa la puntuación total de la oración compuesta, con un rango entre -1 y 1.
+Se crea la columna `"sentiment_analysis"` utilizando la librería nltk, que incluye la herramienta Sentiment Vader, un modelo entrenado para puntuar un texto como positivo, neutro o negativo. El análisis produce un diccionario de la forma {'neg': valor, 'neu': valor, 'pos': valor, 'compound': valor}. El valor "compound" representa la puntuación total de la oración compuesta, con un rango entre -1 y 1.
 - Se utiliza la puntuación "compound" para categorizar la review como negativa (si x < -0.5), neutra (-0.5 >= x <= 0.5) o positiva (si x > 0.5). Luego se redondea a un valor entero (-1, 0, 1). Además, se suma 1 a ese valor para obtener la referencia pedida en el ejercicio (malo 0, neutro 1, positivo 2).
 
 #### Por último
 
 Se verifican las columnas procesadas y se elimina la columna "review" antes de exportar los datos en un formato JSON comprimido en gzip.
 
-### User Items (ETL_user_items.ipynb)
+### User Items [(ETL_user_items.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/ETL_users_items_ETL.ipynb)
 
 En este cuaderno Jupyter, se lleva a cabo el procesamiento de datos para el conjunto de datos de los items que posee cada usuario.
 
