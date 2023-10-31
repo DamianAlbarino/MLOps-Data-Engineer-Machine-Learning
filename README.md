@@ -166,37 +166,37 @@ Esta funcion se va a explicar mas adelante con el [modelo de aprendizaje automat
 ## <a name="eda">Análisis exploratorio de los datos [(EDA_Datasets.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/EDA_Datasets.ipynb)</a>
 
 ### Top 5 juego con mas horas jugadas (playtime_forever)
-![](img\top5_juegos_horas.png)
+![](img/top5_juegos_horas.png)
 
 ### Analisis de price
-![](img\analisisPrice.png)
+![](img/analisisPrice.png)
 
 ### Analisis de generos
 
 #### Cantidad total de juegos por genero
-![](img\cant_juegos_Genero.png)
+![](img/cant_juegos_Genero.png)
 
 #### Top 5 de generos mas jugados
-![](img\top5_juegos_mas_Jugados.png)
+![](img/top5_juegos_mas_Jugados.png)
 
 ### Cantidad de juegos lanzados por año
-![](img\cant_de_juegos_por_año.png)
+![](img/cant_de_juegos_por_año.png)
 
 ### Analisis de recommend
 
 #### Cantidad de recomendaciones
-![](img\cant_recomendados.png)
+![](img/cant_recomendados.png)
 
 #### Top 5 de juegos mas recomendados
-![](img\top5_recomendados.png)
+![](img/top5_recomendados.png)
 
 ### Analisis de sentiment_analysis
 
 #### Cantidad total de sentiment_analysis
-![](img\cantidad_sentiment.png)
+![](img/cantidad_sentiment.png)
 
 #### Top 5 de juegos con mejor reviws segun segun sentiment_analysis
-![](img\top_5_sentiment.png)
+![](img/top_5_sentiment.png)
 
 
 ## <a name="ml">Modelo de Aprendizaje Automático [(ML_Opcion_2.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ML/ML_Opcion_2.ipynb)</a>
