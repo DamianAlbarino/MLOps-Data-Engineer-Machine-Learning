@@ -153,7 +153,62 @@ Ejemplo de retorno:
   ]
 }`
 
-## Análisis exploratorio de los datos (EDA)
+### Funcion "recomendacion_usuario"
+Esta funcion se va a explicar mas adelante con el [modelo de aprendizaje automatico](#ml).
+
+## Análisis exploratorio de los datos [(EDA_Datasets.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/EDA_Datasets.ipynb)
+
+### Top 5 juego con mas horas jugadas (playtime_forever)
+![](img\top5_juegos_horas.png)
+
+### Analisis de price
+![](img\analisisPrice.png)
+
+### Analisis de generos
+
+#### Cantidad total de juegos por genero
+![](img\cant_juegos_Genero.png)
+
+#### Top 5 de generos mas jugados
+![](img\top5_juegos_mas_Jugados.png)
+
+### Cantidad de juegos lanzados por año
+![](img\cant_de_juegos_por_año.png)
+
+### Analisis de recommend
+
+#### Cantidad de recomendaciones
+![](img\cant_recomendados.png)
+
+#### Top 5 de juegos mas recomendados
+![](img\top5_recomendados.png)
+
+### Analisis de sentiment_analysis
+
+#### Cantidad total de sentiment_analysis
+![](img\cantidad_sentiment.png)
+
+#### Top 5 de juegos con mejor reviws segun segun sentiment_analysis
+![](img\top_5_sentiment.png)
+
+
+## <a name="ml">Modelo de Aprendizaje Automático [(ML_Opcion_2.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ML/ML_Opcion_2.ipynb)</a>
+
+En el notbook, se presenta la creación de un modelo de aprendizaje automático utilizando el conjunto de datos previamente explorado en el Análisis Exploratorio de Datos (EDA).
+
+Para este modelo, se ha elegido utilizar el algoritmo SVD (Singular Value Decomposition) de la biblioteca Surprise. El objetivo es predecir las calificaciones de los usuarios para los elementos del conjunto de datos para hacer un sistema de recomendacion usuario-item.
+
+El proceso consta de los siguientes pasos:
+
+1. **Creación de las Calificaciones:** Para entrenar el modelo, se genera una `calificación` a partir de la suma de las columnas `recommend` (0 o 1) y `sentiment_analysis` (0, 1, 2). Estas calificaciones se escalan en una clasificación que varía de 0 a 3.
+
+2. **Selección de Características:** Se seleccionan las características relevantes para el modelo, incluyendo `user_id`, `item_name` y la `calificación` creada en el paso anterior.
+
+3. **Entrenamiento del Modelo:** El conjunto de datos se divide en un 70% para entrenamiento y un 30% para pruebas. Luego, se crea el modelo SVD, se entrena con los datos de entrenamiento y se evalúa su rendimiento utilizando la métrica RMSE (Error Cuadrático Medio de la Raíz). El valor obtenido indica la precisión del modelo, obteniendo un valor aceptable para su utilizacion.
+
+4. **Optimización de Hiperparámetros:** Se ajustan los hiperparámetros del modelo para mejorar su rendimiento. Esto se aplica en la creación del modelo, y el proceso de entrenamiento se repite con los nuevos hiperparámetros.
+
+Finalmente, el modelo entrenado se guarda en formato Pickle para poder ser utilizado en la API.
 
 
 ## Contacto
