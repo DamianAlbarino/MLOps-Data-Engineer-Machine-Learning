@@ -6,7 +6,14 @@ En este proyecto, se realiza una serie de tareas de extracción, transformación
 
 Voy a resumir cada parte de lo hecho en cada instancia. Para obtener detalles específicos sobre las acciones realizadas en cada parte, consultar los archivos correspondientes, que están debidamente comentados.
 
-## ETL
+## Índice
+1. [ETL](#etl)
+2. [Desarrollo API](#api)
+3. [Análisis exploratorio de los datos](#eda)
+4. [Modelo de Aprendizaje Automático](#ml)
+5. [Contacto](#contacto)
+
+## <a name="etl">ETL</a>
 El manejo de los datos, la eliminación y la interpretación están a cargo de las funciones solicitadas para el desarrollo de la API.
 
 ### Steam games [(ETL_Steam_Games.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/ETL_Steam_games.ipynb)
@@ -69,11 +76,11 @@ En este cuaderno Jupyter, se lleva a cabo el procesamiento de datos para el conj
 
 Este proceso de ETL es el más breve, ya que se centra en eliminar columnas innecesarias para el desarrollo de la API. Los datos procesados se exportan en un archivo CSV comprimido en formato gzip.
  
-## Desarrollo API
+## <a name="api">Desarrollo API</a>
 
 API deployada en Render. Link: https://proyecto-individual-nro-1.onrender.com/docs
 
-### Funcion "developer"
+### Función "developer"
 La función <b>`developer`</b> recibe como parámetro una desarrolladora (str) y devuelve la cantidad de items y el porcentaje de items gratuitos por año del desarrollador solicitado.
 
 En esta función se verifica si existe la desarrolladora solicitada en el conjunto de datos. En caso de que no se encuentre en el dataset, se retorna {'Error':'No existe el desarrollador'}. Una vez verificado que la desarrolladora existe, se crea una lista de los años en los que hubo lanzamiento de items por parte de la empresa desarrolladora. Luego, se agrupa el DataFrame por año y se realiza un recuento del total de items lanzados y cuántos de esos son gratuitos. 
@@ -88,7 +95,7 @@ El resultado se presenta en un formato similar a este:
 ]`
 
 
-### Funcion "userdata"
+### Función "userdata"
 
 La función <b>`userdata`</b> recibe como parámetro un usuario (str) y devuelve la cantidad de dinero gastado por el usuario, el porcentaje de recomendación y la cantidad de items que posee.
 
@@ -103,7 +110,7 @@ El resultado se presenta en un formato similar a este:
 }`
 
 
-### Funcion "UserForGenre"
+### Función "UserForGenre"
 La función <b>`UserForGenre`</b> recibe como parámetro un género y devuelve el usuario con más horas jugadas y la acumulación de horas jugadas por año de lanzamiento.
 
 Para lograr esto, se desarrolló un dataset específico para esta función, ya que el procesamiento necesario para proporcionar una respuesta en tiempo real no era viable por Render. El proceso de formación de este dataset se encuentra detallado en el cuaderno Jupyter ETL - EDA\ETL_UserForGenre.ipynb.
@@ -132,7 +139,7 @@ Ejemplo de retorno: `{
   }
 }`
 
-### Funcion "best_developer_year"
+### Función "best_developer_year"
 La función <b>`best_developer_year`</b> recibe como parámetro un año (int) y devuelve el top 3 de desarrolladores más recomendados por los usuarios.
 
 En esta función, se verifica si se encuentra el año proporcionado en el conjunto de datos. En caso de que no existan lanzamientos en ese año, se retorna `{'Error':'No hay ningún lanzamiento ese año'}`. Una vez verificado que se encuentra el año, se reúnen las valoraciones de sentimiento (sentiment_analysis) y se calcula el top 3 de desarrolladores más recomendados por los usuarios.
@@ -141,7 +148,7 @@ Si no hay ninguna revisión para ese año, la función retorna `{'Error':'No hay
   "Puesto 2": "Coffee Stain Studios",
   "Puesto 3": "New World Interactive"}`
 
-### Funcion "developer_reviews_analysis"
+### Función "developer_reviews_analysis"
 
 La función <b>`developer_reviews_analysis`</b> recibe como parámetro el nombre de una desarrolladora (str) y devuelve el total de revisiones positivas y negativas que tiene. Para lograr esto, primero verifica si la desarrolladora existe en el conjunto de datos. Si no se encuentra, la función devuelve `{'Error':'No existe el desarrollador'}`. En caso de que la desarrolladora exista, filtra el conjunto de datos por el nombre de la desarrolladora solicitada y suma las revisiones con `sentiment_analysis = 2` (positivas) y `sentiment_analysis = 0` (negativas).
 
@@ -156,7 +163,7 @@ Ejemplo de retorno:
 ### Funcion "recomendacion_usuario"
 Esta funcion se va a explicar mas adelante con el [modelo de aprendizaje automatico](#ml).
 
-## Análisis exploratorio de los datos [(EDA_Datasets.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/EDA_Datasets.ipynb)
+## <a name="eda">Análisis exploratorio de los datos [(EDA_Datasets.ipynb)](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/EDA_Datasets.ipynb)</a>
 
 ### Top 5 juego con mas horas jugadas (playtime_forever)
 ![](img\top5_juegos_horas.png)
@@ -210,8 +217,33 @@ El proceso consta de los siguientes pasos:
 
 Finalmente, el modelo entrenado se guarda en formato Pickle para poder ser utilizado en la API.
 
+### Función "recomendacion_usuario"
 
-## Contacto
+La función **`"recomendacion_usuario"`** recibe como parámetro el nombre de un usuario (str) y devuelve una lista de los 5 juegos recomendados para ese usuario.
+
+El proceso de recomendación se realiza de la siguiente manera:
+
+1. Se verifica si el usuario existe en el conjunto de datos. Si no se encuentra, la función retorna `{'Error': 'El usuario no existe'}`.
+
+2. Si el usuario existe, se filtran los juegos que ya posee el usuario y se eliminan de la lista de juegos disponibles para que no se le recomienden juegos que ya tiene.
+
+3. A continuación, importamos el modelo de recomendación previamente entrenado, que se encuentra en formato pickle.
+
+4. Se genera una clasificación para el usuario con respecto a todos los juegos disponibles en el conjunto de datos. El modelo utiliza esta clasificación para predecir qué juegos podrían gustarle al usuario.
+
+5. Finalmente, la función selecciona y retorna los 5 juegos con la mayor probabilidad de que le gusten al usuario, basándose en las predicciones del modelo.
+
+Ejemplo de retorno: `{
+  "Juegos recomendados para Sp3ctre": [
+    "King Arthur's Gold",
+    "Everlasting Summer",
+    "Call of Juarez Gunslinger",
+    "The Wolf Among Us",
+    "SUPERHOT"
+  ]
+}`
+
+# <a name="contacto">Contacto</a>
 
 Si tienes alguna pregunta, sugerencia o simplemente quieres ponerte en contacto conmigo, estaré encantado de hablar contigo. Puedes alcanzarme de las siguientes maneras:
 
