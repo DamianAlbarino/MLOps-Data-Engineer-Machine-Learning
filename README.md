@@ -113,7 +113,7 @@ El resultado se presenta en un formato similar a este:
 ### Función "UserForGenre"
 La función <b>`UserForGenre`</b> recibe como parámetro un género y devuelve el usuario con más horas jugadas y la acumulación de horas jugadas por año de lanzamiento.
 
-Para lograr esto, se desarrolló un dataset específico para esta función, ya que el procesamiento necesario para proporcionar una respuesta en tiempo real no era viable por Render. El proceso de formación de este dataset se encuentra detallado en el cuaderno Jupyter ETL - EDA\ETL_UserForGenre.ipynb.
+Para lograr esto, se desarrolló un dataset específico para esta función, ya que el procesamiento necesario para proporcionar una respuesta en tiempo real no era viable por Render. El proceso de formación de este dataset se encuentra detallado en el cuaderno Jupyter [ETL - EDA\ETL_UserForGenre.ipynb](https://github.com/DamianAlbarino/Proyecto-Individual-Nro-1/blob/main/ETL%20-%20EDA/ETL_UserForGenre.ipynb).
 
 En esta función, se verifica si existe el género proporcionado en el conjunto de datos. En caso de que no exista, se retorna `{'Mensaje':'No se encuentran horas registradas para este género'}`. Si el género existe, la función devuelve la información previamente mencionada, que ya se encuentra cargada en el dataset específico. 
 
