@@ -1,6 +1,4 @@
-# Proyecto-Individual-Nro-1
-
-Este repositorio contiene el código y la documentación relacionada con el Proyecto Individual Número 1.
+# MLOps (Data Engineer & Machine Learning)
 
 El objetivo del proyecto es realizar un sistema de recomendacion de videojuegos a usuarios.
 
